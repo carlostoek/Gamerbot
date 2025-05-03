@@ -15,6 +15,9 @@ async def main():
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher()
 
+    # Inicializar base de datos
+    init_db()  # <--- Llamamos a init_db() aquí
+
     # Configurar comandos del bot (se mostrarán en el menú de Telegram)
     commands = [
         BotCommand(command="/start", description="Inicia el bot y muestra el menú"),
@@ -25,15 +28,12 @@ async def main():
     await bot.set_my_commands(commands)
 
     # Registrar middlewares
-    dp.message.middleware(UserMiddleware())  # <--- CAMBIO AQUÍ
+    dp.message.middleware(UserMiddleware())
 
     # Registrar handlers
     user_handlers.register_handlers(dp)
     admin_handlers.register_handlers(dp)
     common_handlers.register_handlers(dp)
-
-    # Inicializar base de datos
-    init_db()
 
     # Configurar tareas programadas
     scheduler = AsyncIOScheduler()
@@ -47,4 +47,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
