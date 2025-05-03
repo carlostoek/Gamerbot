@@ -1,6 +1,10 @@
 from aiogram import Router, types
 from sqlalchemy.orm import Session
 from aiogram import Router, types, Dispatcher
+from aiogram.filters import Command
+from sqlalchemy.orm import Session
+from database import models
+import config
 
 router = Router()
 
