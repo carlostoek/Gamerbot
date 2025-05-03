@@ -3,12 +3,14 @@ from sqlalchemy.orm import Session
 
 router = Router()
 
-@router.message(commands=["admin"])
+from aiogram.filters import Command
+
+@router.message(Command(commands=["admin"]))
 async def admin_panel(message: types.Message):
     # Aquí la lógica del panel de administración
     await message.answer("Panel de administración (en desarrollo)")
 
-@router.message(commands=["sumarpuntos"])
+@router.message(Command(commands=["sumarpuntos"]))
 async def add_points(message: types.Message, db: Session):
     # Aquí la lógica para sumar puntos manualmente
     if message.from_user.id == config.ADMIN_ID:
