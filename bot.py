@@ -25,7 +25,7 @@ async def main():
     await bot.set_my_commands(commands)
 
     # Registrar middlewares
-    dp.middleware.setup(UserMiddleware())
+    dp.message.middleware(UserMiddleware())  # <--- CAMBIO AQUÍ
 
     # Registrar handlers
     user_handlers.register_handlers(dp)
@@ -47,3 +47,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    
