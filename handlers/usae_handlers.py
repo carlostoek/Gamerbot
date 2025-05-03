@@ -4,7 +4,10 @@ from database import models
 
 router = Router()
 
-@router.message(commands=["start"])
+from aiogram.filters import Command
+
+@router.message(Command(commands=["start"]))
+
 async def start_handler(message: types.Message, db: Session):
     user = db.query(models.Usuario).filter(models.Usuario.user_id == message.from_user.id).first()
     if user:
@@ -14,7 +17,8 @@ async def start_handler(message: types.Message, db: Session):
         await message.answer("¡Bienvenido al sistema de gamificación!")
         # El middleware ya registró al usuario
 
-@router.message(commands=["perfil"])
+@router.message(Command(commands=["perfil"]))
+async def profile_handler(message: types.Message, db: Session):
 async def profile_handler(message: types.Message, db: Session):
     user = db.query(models.Usuario).filter(models.Usuario.user_id == message.from_user.id).first()
     if user:
@@ -29,7 +33,8 @@ async def profile_handler(message: types.Message, db: Session):
     else:
         await message.answer("Tu perfil no se encontró.")
 
-@router.message(commands=["ranking"])
+@router.message(Command(commands=["ranking"]))
+async def ranking_handler(message: types.Message, db: Session):
 async def ranking_handler(message: types.Message, db: Session):
     top_users = db.query(models.Usuario).order_by(models.Usuario.puntos.desc()).limit(10).all()
     if top_users:
