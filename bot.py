@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 import config
-from database.database import init_db, get_db
+from database.database import init_db, get_db, Base, engine  # Importamos Base y engine
 from handlers import user_handlers, admin_handlers, common_handlers
 from middlewares.user_middleware import UserMiddleware
 from schedulers import tasks
@@ -15,8 +15,10 @@ async def main():
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher()
 
-    # Inicializar base de datos
-    init_db()  # <--- Llamamos a init_db() aquí
+    # Inicializar la base de datos de forma explícita
+    async with engine.begin() as conn:
+        Base.metadata.create_all(conn)
+    print("Base de datos inicializada (explícitamente).")
 
     # Configurar comandos del bot (se mostrarán en el menú de Telegram)
     commands = [
