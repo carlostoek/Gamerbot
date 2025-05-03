@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from . import models  # Importa las definiciones de las tablas
+import config
 
 Base = declarative_base()
 engine = create_engine(config.DATABASE_URL)
