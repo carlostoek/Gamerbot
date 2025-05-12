@@ -1,11 +1,19 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession  # Asegúrate de tener esto aquí también
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 
 import config
 from database.database import init_db, get_db, Base, engine  # Importamos Base y engine
+
+# Inicializar la base de datos de forma síncrona al importar (intento)
+async def sync_init_db():
+    await init_db()
+    print("Base de datos inicializada (síncronamente al importar).")
+
+asyncio.run(sync_init_db())
+
 from handlers import user_handlers, admin_handlers, common_handlers
 from middlewares.user_middleware import UserMiddleware
 from schedulers import tasks
@@ -14,11 +22,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 async def main():
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher()
-
-    # Inicializar la base de datos de forma explícita y asíncrona
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    print("Base de datos inicializada (explícitamente y asíncrona).")
 
     # Configurar comandos del bot (se mostrarán en el menú de Telegram)
     commands = [
