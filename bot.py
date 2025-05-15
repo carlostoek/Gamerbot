@@ -5,19 +5,18 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 
 import config
-from database.database import init_db, get_db, Base, engine  # Importamos Base y engine
+from database.database import init_db, Base, engine  # <-- Eliminamos get_db
+from handlers import user_handlers, admin_handlers, common_handlers
+from middlewares.user_middleware import UserMiddleware
+from schedulers import tasks  # <-- Comentar o eliminar por ahora
+from apscheduler.schedulers.asyncio import AsyncIOScheduler # <-- Comentar o eliminar por ahora
 
 # Inicializar la base de datos de forma síncrona al importar (intento)
 async def sync_init_db():
     await init_db()
-    print("Base de datos inicializada (síncronamente al importar).")
+    print("Base de datos inicializada (síncronamente al importar) en bot.py.")
 
 asyncio.run(sync_init_db())
-
-from handlers import user_handlers, admin_handlers, common_handlers
-from middlewares.user_middleware import UserMiddleware
-from schedulers import tasks
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 async def main():
     bot = Bot(token=config.BOT_TOKEN)
@@ -40,10 +39,10 @@ async def main():
     admin_handlers.register_handlers(dp)
     common_handlers.register_handlers(dp)
 
-    # Configurar tareas programadas
-    scheduler = AsyncIOScheduler()
-    tasks.setup_scheduled_tasks(scheduler, bot, get_db)
-    scheduler.start()
+    # # Configurar tareas programadas - Comentado por ahora
+    # scheduler = AsyncIOScheduler()
+    # tasks.setup_scheduled_tasks(scheduler, bot, get_session) # <-- Usar get_session si se reactiva
+    # scheduler.start()
 
     try:
         await dp.start_polling(bot)
@@ -52,3 +51,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    
